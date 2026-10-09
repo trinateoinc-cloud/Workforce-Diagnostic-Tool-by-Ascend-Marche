@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #FFFEFA;
+    color: #141651;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-feature-settings: "kern" 1, "liga" 1;
+    letter-spacing: normal;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6, blockquote, .font-heading {
+    font-family: 'Sorts Mill Goudy', Georgia, serif;
+    font-weight: 400 !important;
+    letter-spacing: normal !important;
+  }
+}
+
+.font-heading {
+  font-family: 'Sorts Mill Goudy', Georgia, serif;
+  font-weight: 400 !important;
+  letter-spacing: normal !important;
+}
+
+.font-body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  letter-spacing: normal;
+}
+
+.font-label-btn {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* Base button primitives conforming strictly to Ascend Marché specifications */
+.btn-main {
+  background-color: #D4AF37;
+  color: #FFFEFA;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  border-radius: 0px !important;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-main:hover {
+  background-color: #141651;
+  color: #FFFEFA;
+}
+
+.btn-secondary-light {
+  background-color: transparent;
+  color: #141651;
+  border: 1px solid #D4AF37;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  border-radius: 0px !important;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-secondary-light:hover {
+  background-color: #141651;
+  color: #FFFEFA;
+}
+
+.btn-secondary-dark {
+  background-color: transparent;
+  color: #FFFEFA;
+  border: 1px solid #D4AF37;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  border-radius: 0px !important;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-secondary-dark:hover {
+  background-color: #D4AF37;
+  color: #141651;
+}
+
+

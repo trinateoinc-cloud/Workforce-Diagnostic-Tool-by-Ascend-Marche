@@ -1,0 +1,6 @@
+{
+  "name": "Ascend Marché - Talent R.A.D.A.R.™ Diagnostic",
+  "description": "Talent R.A.D.A.R.™ Strategic workforce diagnostic by Ascend Marché Strategic HR Leadership for founders, CEOs, and growing organizations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
