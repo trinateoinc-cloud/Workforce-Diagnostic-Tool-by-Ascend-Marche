@@ -165,7 +165,7 @@ export default function App() {
       </main>
 
       {/* Quiet, Professional Executive Footer */}
-      <footer className="mt-20 border-t border-[rgba(212,175,55,0.30)] bg-[#FFFEFA] py-10 text-[#5E6088] text-xs">
+      <footer className="mt-20 border-t border-[rgba(212,175,55,0.30)] bg-[#FFFEFA] py-10 text-[#5E6088] text-xs print:hidden">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -232,41 +232,43 @@ export default function App() {
       </footer>
 
       {/* Modals & Dialogs */}
-      <LeadCaptureModal
-        isOpen={isLeadCaptureOpen}
-        onClose={() => setIsLeadCaptureOpen(false)}
-        onSubmit={handleLeadCaptureSubmit}
-        onSkip={handleSkipLeadCapture}
-      />
-
-      <BookingModal
-        isOpen={isBookingOpen}
-        onClose={() => setIsBookingOpen(false)}
-        contact={contact}
-        archetypeTitle={diagnosticResult?.archetype.title}
-        overallScore={diagnosticResult?.overallScore}
-        priorityFocus={diagnosticResult?.topPriorityIssues[0]?.area}
-      />
-
-      <StrategyBlueprintModal
-        isOpen={isBlueprintOpen}
-        onClose={() => setIsBlueprintOpen(false)}
-      />
-
-      {diagnosticResult && (
-        <FollowUpGeneratorModal
-          isOpen={isFollowUpOpen}
-          onClose={() => setIsFollowUpOpen(false)}
-          result={diagnosticResult}
-          contact={contact}
+      <div className="print:hidden">
+        <LeadCaptureModal
+          isOpen={isLeadCaptureOpen}
+          onClose={() => setIsLeadCaptureOpen(false)}
+          onSubmit={handleLeadCaptureSubmit}
+          onSkip={handleSkipLeadCapture}
         />
-      )}
 
-      <TrustManifestoModal
-        isOpen={isTrustOpen}
-        onClose={() => setIsTrustOpen(false)}
-        onStartDiagnostic={handleStartDiagnostic}
-      />
+        <BookingModal
+          isOpen={isBookingOpen}
+          onClose={() => setIsBookingOpen(false)}
+          contact={contact}
+          archetypeTitle={diagnosticResult?.archetype.title}
+          overallScore={diagnosticResult?.overallScore}
+          priorityFocus={diagnosticResult?.topPriorityIssues[0]?.area}
+        />
+
+        <StrategyBlueprintModal
+          isOpen={isBlueprintOpen}
+          onClose={() => setIsBlueprintOpen(false)}
+        />
+
+        {diagnosticResult && (
+          <FollowUpGeneratorModal
+            isOpen={isFollowUpOpen}
+            onClose={() => setIsFollowUpOpen(false)}
+            result={diagnosticResult}
+            contact={contact}
+          />
+        )}
+
+        <TrustManifestoModal
+          isOpen={isTrustOpen}
+          onClose={() => setIsTrustOpen(false)}
+          onStartDiagnostic={handleStartDiagnostic}
+        />
+      </div>
     </div>
   );
 }

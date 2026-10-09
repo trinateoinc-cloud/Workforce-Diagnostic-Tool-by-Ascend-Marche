@@ -22,7 +22,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-[#141651] border-b border-[rgba(212,175,55,0.30)]">
+    <header className="sticky top-0 z-40 bg-[#141651] border-b border-[rgba(212,175,55,0.30)] print:hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
         {/* Zone 1: Brand Element & Off-White Subtitle */}
         <button
