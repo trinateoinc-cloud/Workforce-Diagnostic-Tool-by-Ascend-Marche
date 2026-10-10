@@ -15,11 +15,13 @@ import {
   Share2,
   ExternalLink,
   Linkedin,
-  X
+  X,
+  CheckCircle2
 } from 'lucide-react';
 import { DiagnosticResult, UserContact } from '../types/diagnostic';
 import { TRUST_MANIFESTO } from '../data/diagnosticData';
-import advisorImg from '../assets/images/chro_advisor_portrait_1791268736069.jpg';
+import { WhatsAppIcon } from './WhatsAppIcon';
+import trinaFounderFallback from '../assets/images/trina-teo-founder.jpg';
 
 interface ResultsViewProps {
   result: DiagnosticResult;
@@ -56,31 +58,48 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
     url: typeof window !== 'undefined' ? window.location.href : 'https://ascendmarche.com'
   };
 
-  const linkedInPostText = `Workforce Diagnostic Insights for ${contact?.companyName || 'Our Organization'}:
+  const linkedInPostText = `I just benchmarked our workforce scaling readiness using the Talent R.A.D.A.R.™ Diagnostic by Ascend Marché.
 
-📊 Diagnostic Archetype: ${archetype.title}
-⭐ Talent R.A.D.A.R.™ Readiness Index: ${overallScore}/100 (${archetype.readinessBand})
-🎯 Priority Focus Area: ${topPriorityIssues[0]?.area || 'Workforce Architecture'}
-💡 Executive Summary: "${archetype.tagline}"
+📊 Our Scaling Archetype: ${archetype.title}
+⭐ Readiness Index: ${overallScore}/100 (${archetype.readinessBand})
+🎯 Priority Bottleneck: ${topPriorityIssues[0]?.area || 'Workforce Architecture'}
+💡 Executive Finding: "${archetype.tagline}"
 
-Diagnostic by Ascend Marché Strategic HR Leadership (Trina Teo):
+Key Takeaway: Hiring solves headcounts, but workforce architecture solves consistent execution.
+
+Diagnose your organization's scaling readiness here:
 ${sharePayload.url}
 
-#AscendMarche #TalentRADAR #FractionalCHRO #StrategicHR #ExecutiveLeadership #ScaleReady`;
+#AscendMarche #TalentRADAR #FractionalCHRO #StrategicHR #WorkforceArchitecture #ExecutiveLeadership`;
 
   const handleLinkedInShare = () => {
+    // Copy the formatted post draft to clipboard automatically
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        navigator.clipboard.writeText(linkedInPostText);
+        setCopiedLinkedInPost(true);
+      }
+    } catch {
+      // Fallback silently if clipboard permissions are restricted
+    }
+
     const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(sharePayload.url)}`;
     if (typeof window !== 'undefined') {
       window.open(linkedInUrl, '_blank', 'noopener,noreferrer,width=650,height=650');
     }
     setShareStatus('LinkedIn opened');
-    setTimeout(() => setShareStatus(null), 3000);
+    setTimeout(() => {
+      setShareStatus(null);
+      setCopiedLinkedInPost(false);
+    }, 4500);
   };
 
   const handleCopyLinkedInPost = () => {
-    navigator.clipboard.writeText(linkedInPostText);
-    setCopiedLinkedInPost(true);
-    setTimeout(() => setCopiedLinkedInPost(false), 2500);
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(linkedInPostText);
+      setCopiedLinkedInPost(true);
+      setTimeout(() => setCopiedLinkedInPost(false), 3000);
+    }
   };
 
   const handleWebShare = async () => {
@@ -247,6 +266,47 @@ ${sharePayload.url}
           <div className="p-5 bg-[#FFFEFA] border-l-2 border-l-[#D4AF37] border-t border-r border-b border-[rgba(212,175,55,0.30)] rounded-none text-xs sm:text-sm text-[#141651] leading-relaxed">
             <strong className="text-[#141651] font-label-btn mr-1.5">Root Diagnosis:</strong>
             <span className="font-light">{archetype.primaryDiagnosis}</span>
+          </div>
+
+          {/* Dedicated LinkedIn Archetype Social Share Block */}
+          <div className="p-5 sm:p-6 bg-[#141651] text-[#FFFEFA] border border-[#E0C46A]/40 rounded-none flex flex-col md:flex-row md:items-center justify-between gap-5 print:hidden shadow-md">
+            <div className="space-y-1.5 max-w-xl">
+              <div className="flex items-center gap-2">
+                <Linkedin className="w-4 h-4 text-[#0A66C2] fill-current" />
+                <span className="text-2xs font-label-btn text-[#D4AF37] uppercase tracking-wider">
+                  Social Share · Leadership Network
+                </span>
+              </div>
+              <h3 className="text-base sm:text-lg font-heading font-normal text-[#FFFEFA]">
+                Share your "{archetype.title}" archetype on LinkedIn
+              </h3>
+              <p className="text-xs text-[#DCDBE1] font-light leading-relaxed">
+                Benchmark your readiness score ({overallScore}/100) with your founder network and prompt high-value peer discussion on workforce architecture.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0">
+              <button
+                type="button"
+                onClick={handleCopyLinkedInPost}
+                className="px-4 py-2.5 text-xs font-label-btn btn-secondary-dark flex items-center justify-center gap-2 cursor-pointer transition-all"
+                title="Copy formatted post draft with archetype insights"
+              >
+                <Copy className="w-3.5 h-3.5 text-[#D4AF37]" />
+                <span>{copiedLinkedInPost ? 'Draft Copied!' : 'Copy Post Draft'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleLinkedInShare}
+                className="px-5 py-2.5 text-xs font-label-btn bg-[#0A66C2] hover:bg-[#084e96] text-white flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-sm font-medium group"
+                title="Share your R.A.D.A.R. archetype directly on LinkedIn"
+              >
+                <Linkedin className="w-4 h-4 fill-current text-white" />
+                <span>Share on LinkedIn</span>
+                <ExternalLink className="w-3.5 h-3.5 opacity-80 group-hover:opacity-100 transition-opacity" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -420,10 +480,12 @@ ${sharePayload.url}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div className="flex items-center gap-4">
               <img
-                src={advisorImg}
+                src={typeof window !== 'undefined' ? (localStorage.getItem('trina_founder_photo') || '/images/trina-teo-founder.jpg') : '/images/trina-teo-founder.jpg'}
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = trinaFounderFallback;
+                }}
                 alt="Trina Teo - Fractional CHRO & Strategic HR Leadership"
-                referrerPolicy="no-referrer"
-                className="w-14 h-14 rounded-none object-cover border border-[#D4AF37]"
+                className="w-14 h-14 rounded-none object-cover object-top border border-[#D4AF37] bg-[#080E2F]"
               />
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
@@ -431,26 +493,40 @@ ${sharePayload.url}
                     Executive Consultation
                   </span>
                   <span className="text-3xs font-label-btn px-2 py-0.5 border border-[#D4AF37]/40 text-[#DCDBE1]">
-                    Google Calendar Synced
+                    OnceHub Priority Booking
                   </span>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-normal font-heading text-[#FFFEFA]">
                   Would you like to interpret these results together?
                 </h3>
                 <p className="text-xs sm:text-sm text-[#DCDBE1] font-light">
-                  Book a confidential 30-minute conversation with Trina Teo. Schedule directly into your Google Calendar with automated Google Meet video invite. No pitch, no sales reps.
+                  Book a confidential 30-minute conversation with Trina Teo via OnceHub with personal welcome message and direct calendar confirmation. No pitch, no sales reps.
                 </p>
               </div>
             </div>
             
-            {/* Main button first */}
-            <button
-              onClick={onOpenBooking}
-              className="w-full sm:w-auto px-7 py-3.5 text-xs btn-main cursor-pointer whitespace-nowrap flex items-center justify-center gap-2"
-            >
-              <Calendar className="w-4 h-4 text-[#FFFEFA]" />
-              <span>Schedule via Google Calendar</span>
-            </button>
+            {/* Direct Primary Action Buttons: Calendar Booking & WhatsApp */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+              <a
+                href="https://go.oncehub.com/TalentRadarDiagnostic"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto px-6 py-3.5 text-xs btn-main cursor-pointer whitespace-nowrap flex items-center justify-center gap-2"
+              >
+                <Calendar className="w-4 h-4 text-[#FFFEFA]" />
+                <span>Book Your Talent R.A.D.A.R. Diagnostic Conversation</span>
+              </a>
+              <a
+                href="https://wa.me/6596852943?text=Hi%20Trina%2C%20I%20have%20completed%20the%20Talent%20R.A.D.A.R.%E2%84%A2%20diagnostic%20and%20would%20like%20to%20connect%20regarding%20workforce%20priorities."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto px-5 py-3.5 text-xs bg-[#25D366] hover:bg-[#20ba5a] text-[#0A2619] font-medium cursor-pointer whitespace-nowrap flex items-center justify-center gap-2 transition-colors shadow-xs"
+                title="Tap to connect and chat directly with Trina on WhatsApp"
+              >
+                <WhatsAppIcon className="w-4 h-4 fill-current text-[#0A2619]" />
+                <span>Chat on WhatsApp</span>
+              </a>
+            </div>
           </div>
 
           <div className="pt-5 border-t border-[rgba(212,175,55,0.30)] flex flex-wrap items-center justify-between gap-4 text-xs font-label-btn text-[#DCDBE1]">
@@ -472,13 +548,13 @@ ${sharePayload.url}
                 <span>Share on LinkedIn</span>
               </button>
               <a
-                href="https://wa.me/6596852943?text=Hi%20Trina%2C%20I%20completed%20the%20Talent%20R.A.D.A.R.%E2%84%A2%20Diagnostic%20and%20would%20like%20to%20discuss%20our%20workforce%20priorities."
+                href="https://wa.me/6596852943?text=Hi%20Trina%2C%20I%20have%20completed%20the%20Talent%20R.A.D.A.R.%E2%84%A2%20diagnostic%20and%20would%20like%20to%20connect%20regarding%20workforce%20priorities."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-[#D4AF37] transition-colors flex items-center gap-1.5 cursor-pointer"
+                className="hover:text-[#25D366] transition-colors flex items-center gap-1.5 cursor-pointer"
               >
-                <MessageSquare className="w-3.5 h-3.5 text-[#D4AF37]" />
-                <span>WhatsApp Trina (+65 9685 2943)</span>
+                <WhatsAppIcon className="w-3.5 h-3.5 text-[#25D366]" />
+                <span>WhatsApp (+65 9685 2943)</span>
               </a>
               <button
                 onClick={handleWebShare}
@@ -588,8 +664,8 @@ ${sharePayload.url}
             </span>
             <p className="text-xs font-semibold text-[#141651]">Trina Teo</p>
             <p className="text-2xs text-[#5E6088]">Fractional CHRO & Strategic HR Advisor</p>
+            <p className="text-2xs text-[#141651]">WhatsApp: +65 9685 2943</p>
             <p className="text-2xs text-[#141651]">engage@ascendmarche.com</p>
-            <p className="text-2xs text-[#141651]">trina@ascendmarche.com</p>
             <p className="text-2xs text-[#8C6D1F]">www.ascendmarche.com</p>
           </div>
         </div>

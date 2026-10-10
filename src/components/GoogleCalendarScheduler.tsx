@@ -701,7 +701,7 @@ export const GoogleCalendarScheduler: React.FC<GoogleCalendarSchedulerProps> = (
                 </div>
                 <div>
                   <strong className="text-[#141651] font-medium block">Attendees:</strong>
-                  {currentUser?.email}, Trina Teo (trina@ascendmarche.com), engage@ascendmarche.com
+                  {currentUser?.email}, Trina Teo (Ascend Marché), engage@ascendmarche.com
                 </div>
                 <div>
                   <strong className="text-[#141651] font-medium block">Target Calendar:</strong>

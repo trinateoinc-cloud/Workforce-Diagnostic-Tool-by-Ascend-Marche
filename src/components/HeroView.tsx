@@ -1,9 +1,10 @@
-import React from 'react';
-import { ArrowRight, ShieldCheck, CheckCircle2, FileText } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { ArrowRight, ShieldCheck, CheckCircle2, FileText, Upload, Crop, X } from 'lucide-react';
 import heroImg from '../assets/images/hero_executive_advisory_1791268696498.jpg';
-import advisorImg from '../assets/images/chro_advisor_portrait_1791268736069.jpg';
+import trinaFounderFallback from '../assets/images/trina-teo-founder.jpg';
 import { FAQ } from './FAQ';
 import { TalentRadarOrbit } from './TalentRadarOrbit';
+import { ImageCropperModal } from './ImageCropperModal';
 
 interface HeroViewProps {
   onStart: () => void;
@@ -16,6 +17,62 @@ export const HeroView: React.FC<HeroViewProps> = ({
   onViewSample,
   onOpenManifesto
 }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [photoSrc, setPhotoSrc] = useState<string>(() => {
+    return localStorage.getItem('trina_founder_photo') || '/images/trina-teo-founder.jpg';
+  });
+  const [imgError, setImgError] = useState(false);
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
+  const [isPhotoMenuOpen, setIsPhotoMenuOpen] = useState(false);
+  const [rawImageForCrop, setRawImageForCrop] = useState<string>('');
+
+  // Enable photo adjustment menu on the owner's device or if admin param is set
+  const [isAdmin] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('admin') === 'true' || urlParams.get('edit') === 'true') {
+      localStorage.setItem('ascend_admin_mode', 'true');
+      return true;
+    }
+    return localStorage.getItem('ascend_admin_mode') === 'true' || !!localStorage.getItem('trina_founder_photo');
+  });
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      setRawImageForCrop(dataUrl);
+      setIsCropperOpen(true);
+    };
+    reader.readAsDataURL(file);
+    // Reset file input value so re-selecting same file works
+    e.target.value = '';
+  };
+
+  const handleCropComplete = async (croppedDataUrl: string) => {
+    localStorage.setItem('trina_founder_photo', croppedDataUrl);
+    setPhotoSrc(croppedDataUrl);
+    setImgError(false);
+    setIsCropperOpen(false);
+
+    try {
+      await fetch('/api/upload-founder-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dataUrl: croppedDataUrl })
+      });
+    } catch (err) {
+      console.warn('Backend save notice', err);
+    }
+  };
+
+  const handleOpenCropperForExisting = () => {
+    setRawImageForCrop(photoSrc);
+    setIsCropperOpen(true);
+  };
+
   return (
     <div className="py-8 sm:py-14 space-y-16">
       {/* Hero Header Block */}
@@ -87,25 +144,24 @@ export const HeroView: React.FC<HeroViewProps> = ({
 
       {/* Featured Visual & Problem-Solving Bento Banner */}
       <div className="max-w-5xl mx-auto px-4">
-        <div className="relative rounded-none overflow-hidden border border-[rgba(212,175,55,0.30)] bg-[#141651] aspect-[16/8] sm:aspect-[16/7]">
+        <div className="relative rounded-none overflow-hidden border border-[rgba(212,175,55,0.30)] bg-[#141651] min-h-[260px] sm:min-h-[300px] p-6 sm:p-10 flex flex-col justify-end">
           <img
             src={heroImg}
             alt="Executive Boardroom and Workforce Advisory"
             referrerPolicy="no-referrer"
-            className="w-full h-full object-cover opacity-40 mix-blend-luminosity filter brightness-90 contrast-105"
+            className="absolute inset-0 w-full h-full object-cover opacity-35 mix-blend-luminosity filter brightness-90 contrast-105 pointer-events-none"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#141651] via-[#141651]/60 to-transparent flex flex-col justify-end p-6 sm:p-10 text-[#FFFEFA]">
-            <div className="max-w-2xl space-y-3">
-              <span className="text-xs font-label-btn text-[#D4AF37]">
-                Ascend Marché Strategic HR Leadership
-              </span>
-              <h2 className="text-xl sm:text-3xl font-normal text-[#FFFEFA] font-heading leading-snug">
-                "Hiring solves headcounts. Workforce architecture solves consistent execution."
-              </h2>
-              <p className="text-xs sm:text-sm text-[#DCDBE1] font-light leading-relaxed">
-                Most companies with 20–250 employees don't need a $350k full-time CHRO yet. But they cannot afford to run on ad-hoc payroll administration while navigating high-stakes growth and AI redesign.
-              </p>
-            </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#141651] via-[#141651]/80 to-[#141651]/40 pointer-events-none" />
+          <div className="relative z-10 max-w-2xl space-y-3 text-[#FFFEFA]">
+            <span className="text-xs font-label-btn text-[#D4AF37]">
+              Ascend Marché Strategic HR Leadership
+            </span>
+            <h2 className="text-xl sm:text-3xl font-normal text-[#FFFEFA] font-heading leading-snug">
+              "Hiring solves headcounts. Workforce architecture solves consistent execution."
+            </h2>
+            <p className="text-xs sm:text-sm text-[#DCDBE1] font-light leading-relaxed">
+              Most companies with 20–250 employees don't need a $350k full-time CHRO yet. But they cannot afford to run on ad-hoc payroll administration while navigating high-stakes growth and AI redesign.
+            </p>
           </div>
         </div>
       </div>
@@ -164,120 +220,114 @@ export const HeroView: React.FC<HeroViewProps> = ({
         </div>
       </div>
 
-      {/* CEO Testimonials & Executive Proof */}
-      <div className="max-w-5xl mx-auto px-4 space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-[rgba(212,175,55,0.30)] pb-4">
-          <div>
-            <span className="text-xs font-label-btn text-[#D4AF37]">
-              Executive Feedback
-            </span>
-            <h3 className="text-2xl sm:text-3xl font-normal text-[#141651] font-heading">
-              Clarity From Peer CEOs & Founders
-            </h3>
-          </div>
-          <p className="text-xs text-[#5E6088] font-body">
-            Anonymous insights from leadership teams scaling through 20–250 headcount
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Quote 1 */}
-          <div className="p-6 bg-[#FFFEFA] rounded-none border border-[rgba(212,175,55,0.30)] flex flex-col justify-between space-y-4">
-            <p className="text-sm text-[#141651] leading-relaxed font-heading font-normal italic">
-              "We were convinced we had a recruitment problem. This diagnostic made us realize our real bottleneck was muddy decision rights. The DACI matrix alone saved me 12 hours of weekly firefighting."
-            </p>
-            <div className="pt-4 border-t border-[rgba(212,175,55,0.20)] space-y-1">
-              <p className="text-xs font-label-btn text-[#141651]">Founder & CEO</p>
-              <div className="flex items-center gap-2 text-2xs text-[#5E6088]">
-                <span>B2B Enterprise SaaS</span>
-                <span aria-hidden="true">·</span>
-                <span>80 headcount</span>
-                <span aria-hidden="true">·</span>
-                <span>Series B</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Quote 2 */}
-          <div className="p-6 bg-[#FFFEFA] rounded-none border border-[rgba(212,175,55,0.30)] flex flex-col justify-between space-y-4">
-            <p className="text-sm text-[#141651] leading-relaxed font-heading font-normal italic">
-              "Our board was urging us to hire a $350k full-time CHRO. Taking this gave us the conviction that we were 18 months too early for that. A fractional model solved our middle-manager calibration at a fraction of the payroll cost."
-            </p>
-            <div className="pt-4 border-t border-[rgba(212,175,55,0.20)] space-y-1">
-              <p className="text-xs font-label-btn text-[#141651]">Co-Founder & CEO</p>
-              <div className="flex items-center gap-2 text-2xs text-[#5E6088]">
-                <span>HealthTech Platform</span>
-                <span aria-hidden="true">·</span>
-                <span>45 headcount</span>
-                <span aria-hidden="true">·</span>
-                <span>Series A</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Quote 3 */}
-          <div className="p-6 bg-[#FFFEFA] rounded-none border border-[rgba(212,175,55,0.30)] flex flex-col justify-between space-y-4">
-            <p className="text-sm text-[#141651] leading-relaxed font-heading font-normal italic">
-              "We had spent 6 months worrying about how AI would impact our operational delivery without taking action. The role redesign breakdown in this assessment gave us a concrete plan for our engineering and client ops teams within one afternoon."
-            </p>
-            <div className="pt-4 border-t border-[rgba(212,175,55,0.20)] space-y-1">
-              <p className="text-xs font-label-btn text-[#141651]">Chief Executive Officer</p>
-              <div className="flex items-center gap-2 text-2xs text-[#5E6088]">
-                <span>Tech-Enabled Logistics</span>
-                <span aria-hidden="true">·</span>
-                <span>135 headcount</span>
-                <span aria-hidden="true">·</span>
-                <span>Profitable Scale</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Radical Trust Guarantee Section - Dark Navy Section */}
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="p-6 sm:p-10 bg-[#141651] border border-[#E0C46A]/40 rounded-none space-y-6 text-[#FFFEFA]">
-          <div className="flex items-center gap-3">
-            <div className="p-2 border border-[#D4AF37] text-[#D4AF37]">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-xl sm:text-2xl font-normal text-[#FFFEFA] font-heading">
-                Our High-Trust Conversion Philosophy
-              </h4>
-              <p className="text-xs font-label-btn text-[#D4AF37]">
-                Radical transparency before you ever decide to talk to us.
-              </p>
-            </div>
-          </div>
-          <p className="text-sm sm:text-base text-[#DCDBE1] font-light leading-relaxed">
-            "You may not need professional help yet. This tool is designed to help you objectively understand your workforce stage before deciding what to do next. If your diagnostic shows your current setup is scaling smoothly, that is a great outcome too. If it uncovers structural drag, you receive an immediate DIY action plan you can implement this week with zero external costs."
-          </p>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t border-[rgba(212,175,55,0.30)] pt-6">
-            <div className="flex items-center gap-3">
-              <img
-                src={advisorImg}
-                alt="Trina Teo - Fractional CHRO & Strategic HR Leadership"
-                referrerPolicy="no-referrer"
-                className="w-12 h-12 rounded-none object-cover border border-[#D4AF37]"
+      {/* Radical Trust Guarantee Section */}
+      <div className="max-w-5xl mx-auto px-4">
+        <div className="bg-[#0C1645] border border-[rgba(212,175,55,0.40)] rounded-none overflow-hidden text-[#FFFEFA] shadow-xl">
+          <div className="flex flex-col md:flex-row items-stretch">
+            {/* Executive Authentic Portrait */}
+            <div className="w-full md:w-72 lg:w-80 flex-shrink-0 bg-[#080E2F] flex flex-col items-center justify-center p-6 sm:p-8 border-b md:border-b-0 md:border-r border-[rgba(212,175,55,0.25)]">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileUpload}
               />
-              <div className="text-xs space-y-0.5">
-                <p className="font-heading font-normal text-[#FFFEFA] text-base">
-                  Trina Teo — Fractional CHRO
-                </p>
-                <p className="text-[#DCDBE1] font-light">
-                  Ascend Marché Strategic HR Leadership · Singapore & Global
+              {!imgError ? (
+                <div
+                  className={`relative border border-[#D4AF37]/60 shadow-xl overflow-hidden bg-[#080E2F] ${
+                    isAdmin ? 'cursor-pointer group' : ''
+                  }`}
+                  onClick={() => {
+                    if (isAdmin) setIsPhotoMenuOpen(true);
+                  }}
+                  title={isAdmin ? 'Tap to adjust or update photo' : undefined}
+                >
+                  <img
+                    src={photoSrc}
+                    alt="Trina Teo — Fractional CHRO"
+                    onError={() => {
+                      if (photoSrc !== trinaFounderFallback) {
+                        setPhotoSrc(trinaFounderFallback);
+                      } else {
+                        setImgError(true);
+                      }
+                    }}
+                    className="w-36 h-36 sm:w-44 sm:h-44 md:w-56 md:h-56 object-cover object-center"
+                  />
+                  {isAdmin && (
+                    <div className="absolute inset-0 bg-[#080E2F]/70 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-xs text-[#D4AF37] p-2 text-center pointer-events-none">
+                      <Crop className="w-5 h-5 mb-1 text-[#D4AF37]" />
+                      <span className="font-label-btn text-2xs">Tap to Adjust / Crop</span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div
+                  onClick={() => {
+                    if (isAdmin) fileInputRef.current?.click();
+                  }}
+                  className={`w-36 h-36 sm:w-44 sm:h-44 md:w-56 md:h-56 flex flex-col items-center justify-center border border-[#D4AF37]/60 shadow-xl bg-[#080E2F] text-center p-4 space-y-1.5 ${
+                    isAdmin ? 'cursor-pointer hover:border-[#D4AF37]' : ''
+                  }`}
+                >
+                  <div className="w-10 h-10 rounded-none border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] font-heading text-lg">
+                    TT
+                  </div>
+                  <span className="font-heading text-sm text-[#FFFEFA]">Trina Teo</span>
+                  <span className="text-3xs uppercase tracking-wider text-[#D4AF37] font-label-btn">
+                    Fractional CHRO
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Right: Quote and Identity Block */}
+            <div className="flex-1 p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-6">
+              {/* Quote Block */}
+              <div className="space-y-3">
+                <span className="font-heading text-3xl sm:text-4xl text-[#D4AF37] leading-none block select-none">
+                  “
+                </span>
+                <p className="text-sm sm:text-base text-[#DCDBE1] font-light leading-relaxed font-body">
+                  Your diagnostic shows your current setup is scaling smoothly, that is a great outcome too. If it uncovers structural drag, you receive an immediate DIY action plan you can implement this week with zero external costs.
                 </p>
               </div>
-            </div>
-            {/* Main button first */}
-            <div className="flex items-center gap-3">
-              <button
-                onClick={onStart}
-                className="px-6 py-3 text-xs btn-main cursor-pointer"
-              >
-                Launch Diagnostic
-              </button>
+
+              {/* Horizontal Divider */}
+              <div className="w-full h-px bg-[rgba(212,175,55,0.25)]" />
+
+              {/* Identity & Action Block */}
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5">
+                <div className="space-y-2">
+                  {/* Gold accent bar */}
+                  <div className="w-8 h-0.5 bg-[#D4AF37]" />
+
+                  {/* Name and Fractional CHRO */}
+                  <h4 className="text-xl sm:text-2xl font-normal text-[#FFFEFA] font-heading tracking-tight leading-snug">
+                    Trina Teo — <span className="text-[#FFFEFA]">Fractional CHRO</span>
+                  </h4>
+
+                  {/* Aligned: Ascend Marché | Strategic HR Leadership and Singapore & Global */}
+                  <div className="text-xs sm:text-sm text-[#DCDBE1] font-light space-y-0.5">
+                    <p className="font-medium text-[#FFFEFA]">Ascend Marché | Strategic HR Leadership</p>
+                    <p className="text-[#D4AF37] font-label-btn tracking-wider uppercase text-2xs">
+                      Singapore & Global
+                    </p>
+                  </div>
+                </div>
+
+                {/* Primary Button */}
+                <div className="flex-shrink-0">
+                  <button
+                    onClick={onStart}
+                    className="w-full sm:w-auto px-7 py-3 text-xs btn-main cursor-pointer inline-flex items-center justify-center gap-2 font-medium group"
+                  >
+                    <span>LAUNCH DIAGNOSTIC</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -285,6 +335,60 @@ export const HeroView: React.FC<HeroViewProps> = ({
 
       {/* Frequently Asked Questions */}
       <FAQ />
+
+      {/* Image Cropper & Framing Modal */}
+      <ImageCropperModal
+        isOpen={isCropperOpen}
+        imageSrc={rawImageForCrop}
+        onClose={() => setIsCropperOpen(false)}
+        onCropComplete={handleCropComplete}
+      />
+
+      {/* Founder Portrait Management Modal (Owner Only) */}
+      {isPhotoMenuOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080E2F]/85 backdrop-blur-sm animate-fadeIn">
+          <div className="relative w-full max-w-sm bg-[#0C1645] border border-[rgba(212,175,55,0.40)] p-6 text-[#FFFEFA] shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[rgba(212,175,55,0.25)] pb-3">
+              <h4 className="font-heading text-base text-[#FFFEFA]">Founder Portrait Options</h4>
+              <button
+                type="button"
+                onClick={() => setIsPhotoMenuOpen(false)}
+                className="text-[#DCDBE1] hover:text-[#FFFEFA] p-1 cursor-pointer"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-xs text-[#DCDBE1] font-light">
+              Adjust your portrait framing or upload a different executive photograph.
+            </p>
+            <div className="space-y-2.5 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsPhotoMenuOpen(false);
+                  handleOpenCropperForExisting();
+                }}
+                className="w-full py-2.5 px-4 text-xs font-label-btn btn-secondary-dark flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Crop className="w-4 h-4 text-[#D4AF37]" />
+                <span>Adjust / Re-Crop Framing</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsPhotoMenuOpen(false);
+                  fileInputRef.current?.click();
+                }}
+                className="w-full py-2.5 px-4 text-xs font-label-btn btn-main flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Upload className="w-4 h-4" />
+                <span>Upload New Photograph</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

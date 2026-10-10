@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, Code, Copy, Check } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface TalentRadarOrbitProps {
   onStartDiagnostic?: () => void;
@@ -59,24 +59,8 @@ export const TalentRadarOrbit: React.FC<TalentRadarOrbitProps> = ({
   interactive = true
 }) => {
   const [selectedDimension, setSelectedDimension] = useState<number>(0);
-  const [showEmbedSnippet, setShowEmbedSnippet] = useState(false);
-  const [copiedEmbed, setCopiedEmbed] = useState(false);
 
   const activeDim = RADAR_DIMENSIONS[selectedDimension];
-
-  const embedCode = `<iframe 
-  src="${typeof window !== 'undefined' ? window.location.origin : 'https://ascendmarche-radar.run.app'}" 
-  width="100%" 
-  height="900" 
-  style="border:none; max-width:1100px; margin:0 auto; display:block;" 
-  title="Talent R.A.D.A.R.™ Diagnostic - Ascend Marché">
-</iframe>`;
-
-  const handleCopyEmbed = () => {
-    navigator.clipboard.writeText(embedCode);
-    setCopiedEmbed(true);
-    setTimeout(() => setCopiedEmbed(false), 2200);
-  };
 
   return (
     <div className="w-full bg-[#141651] text-[#FFFEFA] border border-[#E0C46A]/40 rounded-none p-6 sm:p-10 space-y-8">
@@ -296,26 +280,16 @@ export const TalentRadarOrbit: React.FC<TalentRadarOrbitProps> = ({
       </div>
 
       {/* Call to Action Row */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-2 border-t border-[rgba(212,175,55,0.20)]">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-          {onStartDiagnostic && (
-            <button
-              onClick={onStartDiagnostic}
-              className="px-6 py-3 text-xs btn-main cursor-pointer flex items-center justify-center gap-2"
-            >
-              <span>Launch R.A.D.A.R. Diagnostic</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          )}
-
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-3 border-t border-[rgba(212,175,55,0.20)]">
+        {onStartDiagnostic && (
           <button
-            onClick={() => setShowEmbedSnippet(!showEmbedSnippet)}
-            className="px-5 py-3 text-xs btn-secondary-dark cursor-pointer flex items-center justify-center gap-2"
+            onClick={onStartDiagnostic}
+            className="w-full sm:w-auto px-7 py-3.5 text-xs btn-main cursor-pointer flex items-center justify-center gap-2 group"
           >
-            <Code className="w-4 h-4 text-[#D4AF37]" />
-            <span>{showEmbedSnippet ? 'Hide Embed Code' : 'Embed on Website'}</span>
+            <span>Launch R.A.D.A.R. Diagnostic</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </button>
-        </div>
+        )}
 
         <a
           href="https://www.ascendmarche.com/#radar"
@@ -327,32 +301,6 @@ export const TalentRadarOrbit: React.FC<TalentRadarOrbitProps> = ({
           <ArrowRight className="w-3.5 h-3.5" />
         </a>
       </div>
-
-      {/* Website Embed Snippet Drawer */}
-      {showEmbedSnippet && (
-        <div className="p-5 bg-[#141651] border border-[#E0C46A]/40 rounded-none space-y-3 animate-fadeIn">
-          <div className="flex items-center justify-between">
-            <div>
-              <h4 className="text-sm font-label-btn text-[#FFFEFA]">
-                Embed Talent R.A.D.A.R.™ Into ascendmarche.com
-              </h4>
-              <p className="text-xs text-[#DCDBE1] font-light">
-                Paste this responsive iframe directly into your CMS or HTML page at https://www.ascendmarche.com/#radar
-              </p>
-            </div>
-            <button
-              onClick={handleCopyEmbed}
-              className="px-4 py-2 text-2xs font-label-btn btn-secondary-dark cursor-pointer flex items-center gap-1.5"
-            >
-              {copiedEmbed ? <Check className="w-3.5 h-3.5 text-[#D4AF37]" /> : <Copy className="w-3.5 h-3.5 text-[#D4AF37]" />}
-              <span>{copiedEmbed ? 'Copied!' : 'Copy Code'}</span>
-            </button>
-          </div>
-          <pre className="p-3 bg-[#141651] border border-[rgba(212,175,55,0.30)] text-3xs font-mono text-[#DCDBE1] overflow-x-auto whitespace-pre-wrap rounded-none">
-            {embedCode}
-          </pre>
-        </div>
-      )}
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { BookingModal } from './components/BookingModal';
 import { StrategyBlueprintModal } from './components/StrategyBlueprintModal';
 import { FollowUpGeneratorModal } from './components/FollowUpGeneratorModal';
 import { TrustManifestoModal } from './components/TrustManifestoModal';
+import { WhatsAppIcon } from './components/WhatsAppIcon';
 import {
   DIAGNOSTIC_QUESTIONS,
   calculateDiagnosticResult,
@@ -167,29 +168,37 @@ export default function App() {
       {/* Quiet, Professional Executive Footer */}
       <footer className="mt-20 border-t border-[rgba(212,175,55,0.30)] bg-[#FFFEFA] py-10 text-[#5E6088] text-xs print:hidden">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="font-heading font-normal text-xl text-[#141651]">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            {/* Brand Block: Ascend Marché on one single line above subtitle */}
+            <div className="flex flex-col items-start gap-1">
+              <span className="font-heading font-normal text-xl sm:text-2xl text-[#141651] whitespace-nowrap tracking-tight">
                 Ascend Marché
               </span>
-              <span aria-hidden="true" className="text-[#D4AF37]/50">·</span>
-              <span className="text-[#5E6088] font-light">Strategic HR Leadership · Accelerating Transformation</span>
+              <p className="text-xs sm:text-sm text-[#5E6088] font-light leading-snug">
+                Strategic HR Leadership · Accelerating Transformation
+              </p>
             </div>
 
-            {/* Direct Executive Contact Emails */}
-            <div className="flex items-center gap-4 text-xs font-label-btn text-[#141651]">
+            {/* Direct Executive Contact: WhatsApp & Single engage@ascendmarche.com */}
+            <div className="flex flex-wrap items-center gap-3 text-xs font-label-btn">
+              <a
+                href="https://wa.me/6596852943?text=Hi%20Trina%2C%20I%20have%20completed%20the%20Talent%20R.A.D.A.R.%E2%84%A2%20diagnostic%20and%20would%20like%20to%20connect%20regarding%20workforce%20priorities."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#141651] border border-[#25D366]/40 transition-colors cursor-pointer"
+                title="Tap to connect directly with Trina on WhatsApp"
+              >
+                <WhatsAppIcon className="w-3.5 h-3.5 text-[#25D366]" />
+                <span className="whitespace-nowrap">Chat on WhatsApp (+65 9685 2943)</span>
+              </a>
+              <span aria-hidden="true" className="text-[#D4AF37]/50 hidden sm:inline">·</span>
               <a
                 href="mailto:engage@ascendmarche.com"
-                className="hover:text-[#D4AF37] transition-colors cursor-pointer"
+                className="text-[#5E6088] hover:text-[#141651] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                title="Email Ascend Marché"
               >
-                engage@ascendmarche.com
-              </a>
-              <span aria-hidden="true" className="text-[#D4AF37]/50">·</span>
-              <a
-                href="mailto:trina@ascendmarche.com"
-                className="hover:text-[#D4AF37] transition-colors cursor-pointer"
-              >
-                trina@ascendmarche.com
+                <Mail className="w-3.5 h-3.5 text-[#5E6088]" />
+                <span>engage@ascendmarche.com</span>
               </a>
             </div>
           </div>

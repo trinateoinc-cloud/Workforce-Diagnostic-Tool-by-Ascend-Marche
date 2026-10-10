@@ -60,13 +60,15 @@ export const Header: React.FC<HeaderProps> = ({
             <BookOpen className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
             <span>Methodology</span>
           </button>
-          <button
-            onClick={onOpenBooking}
+          <a
+            href="https://go.oncehub.com/TalentRadarDiagnostic"
+            target="_blank"
+            rel="noopener noreferrer"
             className="hover:text-[#D4AF37] transition-colors flex items-center gap-1.5 whitespace-nowrap cursor-pointer"
           >
             <Calendar className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
-            <span>Google Calendar Sync</span>
-          </button>
+            <span>Book Your Talent R.A.D.A.R. Diagnostic Conversation</span>
+          </a>
           <a
             href="https://www.ascendmarche.com/#radar"
             target="_blank"
@@ -131,16 +133,16 @@ export const Header: React.FC<HeaderProps> = ({
               <BookOpen className="w-4 h-4 text-[#D4AF37]" />
               Methodology & Scoring Logic
             </button>
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenBooking();
-              }}
+            <a
+              href="https://go.oncehub.com/TalentRadarDiagnostic"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileMenuOpen(false)}
               className="text-left py-2 hover:text-[#D4AF37] transition-colors flex items-center gap-2 cursor-pointer border-b border-[rgba(212,175,55,0.15)]"
             >
               <Calendar className="w-4 h-4 text-[#D4AF37]" />
-              Google Calendar Booking
-            </button>
+              <span>Book Your Talent R.A.D.A.R. Diagnostic Conversation</span>
+            </a>
             <a
               href="https://www.ascendmarche.com/#radar"
               target="_blank"

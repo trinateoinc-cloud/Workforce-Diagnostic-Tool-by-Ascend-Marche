@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { TRUST_MANIFESTO } from '../data/diagnosticData';
-import advisorImg from '../assets/images/chro_advisor_portrait_1791268736069.jpg';
+import trinaFounderFallback from '../assets/images/trina-teo-founder.jpg';
 
 interface TrustManifestoModalProps {
   isOpen: boolean;
@@ -59,10 +59,12 @@ export const TrustManifestoModal: React.FC<TrustManifestoModalProps> = ({
         {/* Advisor Sign-off - Dark Navy Card */}
         <div className="p-5 bg-[#141651] text-[#FFFEFA] rounded-none border border-[#E0C46A]/40 flex items-center gap-4">
           <img
-            src={advisorImg}
+            src={typeof window !== 'undefined' ? (localStorage.getItem('trina_founder_photo') || '/images/trina-teo-founder.jpg') : '/images/trina-teo-founder.jpg'}
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = trinaFounderFallback;
+            }}
             alt="Trina Teo - Fractional CHRO & Strategic HR Leadership"
-            referrerPolicy="no-referrer"
-            className="w-12 h-12 rounded-none object-cover border border-[#D4AF37] shrink-0"
+            className="w-12 h-12 rounded-none object-cover object-top border border-[#D4AF37] shrink-0 bg-[#080E2F]"
           />
           <div className="space-y-0.5 text-xs">
             <p className="font-heading font-normal text-base text-[#FFFEFA]">Trina Teo — Fractional CHRO</p>

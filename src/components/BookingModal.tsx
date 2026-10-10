@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Calendar, CheckCircle2, X, MessageSquare, ShieldCheck, ExternalLink, Clock, Sparkles } from 'lucide-react';
-import advisorImg from '../assets/images/chro_advisor_portrait_1791268736069.jpg';
+import { WhatsAppIcon } from './WhatsAppIcon';
 import { UserContact } from '../types/diagnostic';
 import { GoogleCalendarScheduler } from './GoogleCalendarScheduler';
+import trinaFounderFallback from '../assets/images/trina-teo-founder.jpg';
 
 // Dedicated OnceHub booking URL for Talent R.A.D.A.R.™ Diagnostic
 export const ONCEHUB_BOOKING_URL = 'https://go.oncehub.com/TalentRadarDiagnostic';
@@ -26,7 +27,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   priorityFocus,
   customBookingUrl = ONCEHUB_BOOKING_URL
 }) => {
-  const [activeTab, setActiveTab] = useState<'google-calendar' | 'oncehub'>('google-calendar');
+  const [activeTab, setActiveTab] = useState<'google-calendar' | 'oncehub'>('oncehub');
   const [onceHubView, setOnceHubView] = useState<'overview' | 'embedded'>('overview');
 
   if (!isOpen) return null;
@@ -75,10 +76,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           {/* Header & Advisor Identity */}
           <div className="flex items-start gap-4">
             <img
-              src={advisorImg}
+              src={typeof window !== 'undefined' ? (localStorage.getItem('trina_founder_photo') || '/images/trina-teo-founder.jpg') : '/images/trina-teo-founder.jpg'}
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = trinaFounderFallback;
+              }}
               alt="Trina Teo - Fractional CHRO & Strategic HR Leadership"
-              referrerPolicy="no-referrer"
-              className="w-14 h-14 sm:w-16 sm:h-16 rounded-none object-cover border border-[#D4AF37] shrink-0"
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-none object-cover object-top border border-[#D4AF37] shrink-0 bg-[#080E2F]"
             />
             <div className="space-y-1">
               <div className="flex items-center gap-2">
@@ -86,7 +89,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   Talent R.A.D.A.R.™ Session
                 </span>
                 <span className="text-3xs font-label-btn px-2 py-0.5 rounded-none border border-[rgba(212,175,55,0.40)] text-[#141651] bg-[#FFFEFA]">
-                  Google Calendar Enabled
+                  OnceHub Priority Booking
                 </span>
               </div>
               <h3 className="text-xl sm:text-2xl font-normal font-heading text-[#141651]">
@@ -139,18 +142,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           <div className="flex border-b border-[rgba(212,175,55,0.30)]">
             <button
               type="button"
-              onClick={() => setActiveTab('google-calendar')}
-              className={`flex-1 py-2.5 text-xs font-label-btn transition-colors cursor-pointer border-b-2 flex items-center justify-center gap-2 ${
-                activeTab === 'google-calendar'
-                  ? 'border-[#D4AF37] text-[#141651] font-medium'
-                  : 'border-transparent text-[#5E6088] hover:text-[#141651]'
-              }`}
-            >
-              <Calendar className="w-3.5 h-3.5 text-[#D4AF37]" />
-              <span>Google Calendar (Direct Sync)</span>
-            </button>
-            <button
-              type="button"
               onClick={() => setActiveTab('oncehub')}
               className={`flex-1 py-2.5 text-xs font-label-btn transition-colors cursor-pointer border-b-2 flex items-center justify-center gap-2 ${
                 activeTab === 'oncehub'
@@ -158,8 +149,20 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   : 'border-transparent text-[#5E6088] hover:text-[#141651]'
               }`}
             >
-              <span>OnceHub Calendar Link</span>
+              <Calendar className="w-3.5 h-3.5 text-[#D4AF37]" />
+              <span>OnceHub Priority Booking</span>
               <ExternalLink className="w-3 h-3 text-[#5E6088]" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('google-calendar')}
+              className={`flex-1 py-2.5 text-xs font-label-btn transition-colors cursor-pointer border-b-2 flex items-center justify-center gap-2 ${
+                activeTab === 'google-calendar'
+                  ? 'border-[#D4AF37] text-[#141651] font-medium'
+                  : 'border-transparent text-[#5E6088] hover:text-[#141651]'
+              }`}
+            >
+              <span>Google Calendar (Direct Sync)</span>
             </button>
           </div>
 
@@ -238,32 +241,26 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             </div>
           )}
 
-          {/* Alternate Contact Options */}
-          <div className="pt-2 flex flex-wrap items-center justify-between gap-4 text-xs font-label-btn text-[#5E6088] border-t border-[rgba(212,175,55,0.20)]">
+          {/* Direct WhatsApp & Single Executive Email */}
+          <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-label-btn text-[#5E6088] border-t border-[rgba(212,175,55,0.20)]">
             <a
-              href="https://wa.me/6596852943?text=Hi%20Trina%2C%20I%20completed%20the%20Talent%20R.A.D.A.R.%E2%84%A2%20Diagnostic%20and%20would%20like%20to%20discuss%20our%20workforce%20priorities."
+              href="https://wa.me/6596852943?text=Hi%20Trina%2C%20I%20have%20completed%20the%20Talent%20R.A.D.A.R.%E2%84%A2%20diagnostic%20and%20would%20like%20to%20connect%20regarding%20workforce%20priorities."
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-[#D4AF37] transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#25D366] hover:bg-[#20ba5a] text-[#0A2619] font-medium transition-colors cursor-pointer shadow-xs"
+              title="Connect directly with Trina on WhatsApp"
             >
-              <MessageSquare className="w-3.5 h-3.5 text-[#D4AF37]" />
-              <span>Prefer WhatsApp? (+65 9685 2943)</span>
+              <WhatsAppIcon className="w-4 h-4 fill-current text-[#0A2619]" />
+              <span>Connect with Trina on WhatsApp (+65 9685 2943)</span>
             </a>
 
-            <div className="flex items-center gap-3">
-              <span className="text-[#5E6088]">Email:</span>
+            <div className="flex items-center gap-2 text-2xs text-[#5E6088]">
+              <span>Inquiries:</span>
               <a
-                href={`mailto:engage@ascendmarche.com?cc=trina@ascendmarche.com&subject=Talent%20R.A.D.A.R.%20Diagnostic%20Follow-Up&body=Hi%20Trina%2C%0A%0AI%20completed%20the%20Talent%20R.A.D.A.R.%20Diagnostic%20for%20${encodeURIComponent(contact?.companyName || 'our company')}%20and%20would%20like%20to%20review%20our%20workforce%20priorities.`}
-                className="hover:text-[#D4AF37] transition-colors cursor-pointer"
+                href={`mailto:engage@ascendmarche.com?subject=Talent%20R.A.D.A.R.%20Diagnostic%20Follow-Up&body=Hi%20Trina%2C%0A%0AI%20completed%20the%20Talent%20R.A.D.A.R.%20Diagnostic%20for%20${encodeURIComponent(contact?.companyName || 'our company')}%20and%20would%20like%20to%20review%20our%20workforce%20priorities.`}
+                className="hover:text-[#141651] transition-colors underline underline-offset-2 cursor-pointer"
               >
                 engage@ascendmarche.com
-              </a>
-              <span aria-hidden="true" className="text-[#D4AF37]/40">·</span>
-              <a
-                href={`mailto:trina@ascendmarche.com?subject=Talent%20R.A.D.A.R.%20Diagnostic%20Follow-Up&body=Hi%20Trina%2C%0A%0AI%20completed%20the%20Talent%20R.A.D.A.R.%20Diagnostic%20for%20${encodeURIComponent(contact?.companyName || 'our company')}%20and%20would%20like%20to%20review%20our%20workforce%20priorities.`}
-                className="hover:text-[#D4AF37] transition-colors cursor-pointer"
-              >
-                trina@ascendmarche.com
               </a>
             </div>
           </div>

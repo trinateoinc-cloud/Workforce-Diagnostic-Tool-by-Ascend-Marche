@@ -177,13 +177,12 @@ export async function createStrategyCalibrationEvent(
     `2. Immediate DIY Workforce Intervention — Flesh out 1 priority action your team can execute internally this week.`,
     `3. Strategic Options Review — Determine whether your current phase calls for fractional HR leadership or manager coaching.`,
     ``,
-    `Direct Inquiries: engage@ascendmarche.com | trina@ascendmarche.com`,
+    `Direct Inquiries: engage@ascendmarche.com | WhatsApp: +65 9685 2943`,
     `Ascend Marché Portal: https://www.ascendmarche.com`
   ].filter(Boolean).join('\n');
 
   const attendeesList: Array<{ email: string; displayName?: string }> = [
-    { email: 'trina@ascendmarche.com', displayName: 'Trina Teo (Ascend Marché)' },
-    { email: 'engage@ascendmarche.com', displayName: 'Ascend Marché Coordination' }
+    { email: 'engage@ascendmarche.com', displayName: 'Ascend Marché (Trina Teo)' }
   ];
 
   if (contactEmail && !attendeesList.some(a => a.email.toLowerCase() === contactEmail.toLowerCase())) {

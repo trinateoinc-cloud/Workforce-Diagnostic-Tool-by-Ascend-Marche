@@ -558,7 +558,7 @@ Warm regards,
 Trina Teo
 Fractional CHRO & Strategic HR Leadership
 Ascend Marché · Accelerating Transformation
-engage@ascendmarche.com · trina@ascendmarche.com
+WhatsApp: +65 9685 2943 · engage@ascendmarche.com
 https://www.ascendmarche.com/#radar`,
     whatsAppBody: `Hi ${name}, Trina here from Ascend Marché. Saw your results from the Talent R.A.D.A.R.™ Diagnostic—mapped to "${archetype.title}". The biggest immediate leverage point looks to be unblocking ${prioritized[0]?.area || 'leadership bandwidth'}. If you'd like a quick voice note or call to review options, let me know!`,
     linkedInBody: `Hi ${name}, thank you for completing Ascend Marché's Talent R.A.D.A.R.™ Diagnostic. Your assessment highlighted "${archetype.title}" as your primary organizational phase. If helpful, I'd be glad to share how peer CEOs at your scale resolved this through the Talent R.A.D.A.R.™ framework without adding a full-time $350k CHRO salary. Let me know if you'd like to connect!`
